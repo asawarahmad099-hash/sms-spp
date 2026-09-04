@@ -6,7 +6,12 @@ plugins {
 
 android {
     namespace = "com.smsplatform.sms_gateway"
-    compileSdk = flutter.compileSdkVersion
+    // Flutter's own default (flutter.compileSdkVersion = 36) is one below
+    // what permission_handler_android requires (it needs 37+, and fails
+    // the build otherwise) — compileSdk and targetSdk are independent
+    // knobs (compileSdk only controls which APIs are available to compile
+    // against; targetSdk below stays at Flutter's own default).
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
