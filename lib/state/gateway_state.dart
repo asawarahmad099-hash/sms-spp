@@ -13,7 +13,7 @@ enum GatewayConnectionStatus { unknown, pendingApproval, active, disabledOrTenan
 /// mutating itself from the background. This class only owns what the UI
 /// isolate itself needs: whether we're paired, and the credentials.
 class GatewayState extends ChangeNotifier {
-  GatewayState({CredentialsStore store = const CredentialsStore()}) : _store = store;
+  GatewayState({this._store = const CredentialsStore()});
 
   final CredentialsStore _store;
 

@@ -75,10 +75,10 @@ class ApiClient {
       'POST',
       '/api/v1/devices/${credentials.deviceId}/heartbeat',
       body: {
-        if (appVersion != null) 'app_version': appVersion,
-        if (osVersion != null) 'os_version': osVersion,
-        if (batteryLevel != null) 'battery_level': batteryLevel,
-        if (networkType != null) 'network_type': networkType,
+        'app_version': ?appVersion,
+        'os_version': ?osVersion,
+        'battery_level': ?batteryLevel,
+        'network_type': ?networkType,
         if (simSlots.isNotEmpty) 'sim_slots': simSlots.map((s) => s.toHeartbeatJson()).toList(),
       },
     );
@@ -111,9 +111,9 @@ class ApiClient {
       body: {
         'result': result,
         'state': state,
-        if (errorCode != null) 'error_code': errorCode,
-        if (errorMessage != null) 'error_message': errorMessage,
-        if (latencyMs != null) 'latency_ms': latencyMs,
+        'error_code': ?errorCode,
+        'error_message': ?errorMessage,
+        'latency_ms': ?latencyMs,
       },
     );
   }
