@@ -22,6 +22,20 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # Puts sdkmanager on PATH and accepts SDK licenses — flutter-action
+      # (below) only installs the Flutter SDK itself, not Android SDK
+      # command-line tools, so sdkmanager isn't reliably on PATH without this.
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Pre-install the exact NDK version this Flutter release's Gradle
+      # plugin defaults to (ndkVersion = flutter.ndkVersion in
+      # android/app/build.gradle.kts). Without this, Gradle's own
+      # auto-install of a missing NDK package can fail with just "Package
+      # ndk not found" and no clearer reason.
+      - name: Install required Android NDK
+        run: sdkmanager --install "ndk;28.2.13676358"
+
       # Pinned to match the project's currently-verified Flutter version
       # (analyze/test/build all confirmed locally against this exact
       # version) rather than a moving "stable" channel, so this workflow
@@ -32,20 +46,6 @@ jobs:
           flutter-version: '3.47.1'
           channel: stable
           cache: true
-
-      # Accept SDK licenses and pre-install the exact NDK version this
-      # Flutter release's Gradle plugin defaults to (ndkVersion =
-      # flutter.ndkVersion in android/app/build.gradle.kts). Without this,
-      # Gradle's own auto-install of a missing NDK package can fail on a
-      # fresh runner with just "Package ndk not found" and no clearer
-      # reason - installing it explicitly here surfaces any real problem
-      # immediately instead of failing deep inside the Gradle build.
-      - name: Install required Android NDK
-        run: |
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager --install "ndk;28.2.13676358"
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
 
       - name: Install dependencies
         run: flutter pub get
