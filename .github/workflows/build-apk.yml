@@ -22,11 +22,30 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # Pinned to match the project's currently-verified Flutter version
+      # (analyze/test/build all confirmed locally against this exact
+      # version) rather than a moving "stable" channel, so this workflow
+      # doesn't silently break on an unrelated Flutter release bump.
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.47.1'
           channel: stable
           cache: true
+
+      # Accept SDK licenses and pre-install the exact NDK version this
+      # Flutter release's Gradle plugin defaults to (ndkVersion =
+      # flutter.ndkVersion in android/app/build.gradle.kts). Without this,
+      # Gradle's own auto-install of a missing NDK package can fail on a
+      # fresh runner with just "Package ndk not found" and no clearer
+      # reason - installing it explicitly here surfaces any real problem
+      # immediately instead of failing deep inside the Gradle build.
+      - name: Install required Android NDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager --install "ndk;28.2.13676358"
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
 
       - name: Install dependencies
         run: flutter pub get
